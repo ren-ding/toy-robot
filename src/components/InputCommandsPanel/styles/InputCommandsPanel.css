@@ -1,0 +1,18 @@
+.input-commands-panel-wrapper
+{
+    flex: 1;
+    margin: 20px
+}
+  
+.input-commands-panel-wrapper .input-label
+{
+    font-size: 25px;
+    display: block;
+    padding: 5px;
+}
+
+.input-commands-panel-wrapper .input-commands-textarea
+{
+    font-size: 20px;
+    width: 300px;
+}

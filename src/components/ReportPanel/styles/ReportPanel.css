@@ -1,0 +1,25 @@
+.report-panel-wrapper
+{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}
+
+.report-panel-wrapper .report-panel-label
+{
+    font-size: 25px;
+    margin: 5px;
+}
+
+.report-panel-wrapper .report-panel-results
+{
+    height: 460px;
+    width: 300px;
+    font-size: 20px;
+    border-style: solid;
+    border-radius: 5px;
+    border-color: darkgray;
+    border-width: 1px;
+    padding: 2px;
+}

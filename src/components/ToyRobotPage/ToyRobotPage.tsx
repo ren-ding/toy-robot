@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import InputCommandsPanel from '../InputCommandsPanel/InputCommandsPanel'
 import ReportPanel from '../ReportPanel/ReportPanel'
+import './styles/ToyRobotPage.css'
 
 interface Props {}
 
@@ -20,13 +21,13 @@ interface ContainerProps {
 }
 
 const Header = () => (
-  <div>Toy-Robot Simulator</div>
+  <div id='toy-robot-page-header' className='toy-robot-page-header'>Toy-Robot Simulator</div>
 );
 
 const ApplyButton = ({
   onClick
 }:ApplyButtonProps) => (
-  <button type="button" id='apply-button' onClick={onClick}>apply</button>
+  <button type="button" id='apply-button' className='apply-button' onClick={onClick}>apply</button>
 );
 
 const Container = ({
@@ -34,7 +35,7 @@ const Container = ({
   onInputCommands,
   onApplyButtonClick
 }:ContainerProps) =>(
-  <div>
+  <div id='toy-robot-page-container' className='toy-robot-page-container'>
   <InputCommandsPanel 
     onInputCommands = {onInputCommands}
   />
@@ -57,7 +58,7 @@ export default class ToyRobotPage extends Component<Props,State> {
 
   render() {
     return (
-      <div id='toy-robot-page-wrapper'>
+      <div id='toy-robot-page-wrapper' className='toy-robot-page-wrapper'>
         <Header />
         <Container 
           results = {this.state.results}

@@ -1,0 +1,30 @@
+.toy-robot-page-wrapper
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items:center;
+    margin: 40px;
+}
+
+.toy-robot-page-wrapper .toy-robot-page-header
+{
+    flex:1;
+    font-size: 40px;
+    line-height: 3;
+    font-weight: bold;
+}
+  
+.toy-robot-page-wrapper .toy-robot-page-container
+{
+    flex:6;
+    display: flex;
+    flex-direction: row;
+}
+  
+.apply-button
+{
+    height: 30px;
+    margin: auto;
+}
+  
