@@ -28,4 +28,23 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 ### `npm test`
 Launches the test runner in the interactive watch mode.<br>
 
-## Notes
+## Porject structure
+.
+|--public
+|   |---index.html
+|--src
+|   |---components
+|   |        |---App
+|   |             |---App.tsx
+|   |             |---__test__
+|   |             |      |---App.test.tsx
+|   |             |---styles
+|   |             |      |---App.css
+|   |             |---index.tsx
+|   |---index.tsx
+|--package.json
+|--...
+
+public folder include html views
+src folder include components folder which contains all components
+    each component has it's own folder with __test__ folder, styles folder inside and React component file as well, it also contains a index.tsx to for exporting components if only this component need to be used.
