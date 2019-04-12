@@ -6,7 +6,7 @@ import Enzyme, { shallow } from 'enzyme';
 Enzyme.configure({ adapter: new Adapter() });
 
 interface Props {
-  results:string
+  results:Array<string>
 }
 
 describe('ReportPanel', ()=>{
@@ -15,7 +15,7 @@ describe('ReportPanel', ()=>{
 
   beforeEach(()=>{
     props = {
-      results:''
+      results:[]
     };
 
     reportPanel = () =>shallow(<ReportPanel {...props} />, { lifecycleExperimental: true })
@@ -23,20 +23,22 @@ describe('ReportPanel', ()=>{
 
   describe('initialize with an empty string results props', ()=>{
     it('should render a title span and an empty textarea', () => {
-      expect(reportPanel().html()).toContain('Results:');
-      expect(reportPanel().find('#report-panel-results').length).toBe(1);
-      expect(reportPanel().find('#report-panel-results').text()).toBe('');
+      const panel = reportPanel();
+      expect(panel.html()).toContain('Results:');
+      expect(panel.find('#report-panel-results').length).toBe(1);
+      expect(panel.find('#report-panel-results').text()).toBe('');
     });
   });
   
-  describe('initialize with a result string props', ()=>{
-    it('should render a title span and the textarea with the value of the string', () => {
-      const resultString = '3,3,NORTH';
-      props.results = resultString;
-
-      expect(reportPanel().html()).toContain('Results:');
-      expect(reportPanel().find('#report-panel-results').length).toBe(1);
-      expect(reportPanel().find('#report-panel-results').text()).toBe(resultString);      
+  describe('initialize with results', ()=>{
+    it('should render a title span and the textarea with results', () => {
+      const results = ['3,3,NORTH','3,4,NORTH','3,4,WEST'];
+      const textResults = results.reduce((accumulator,currentValue)=> accumulator + currentValue);
+      props.results = results;
+      const panel = reportPanel();
+      expect(panel.html()).toContain('Results:');
+      expect(panel.find('#report-panel-results').length).toBe(1);
+      expect(reportPanel().find('#report-panel-results').text()).toBe(textResults);      
     });
   });
   

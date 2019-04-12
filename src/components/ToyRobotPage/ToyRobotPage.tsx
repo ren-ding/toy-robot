@@ -7,7 +7,7 @@ interface Props {}
 
 interface State {
   inputCommands:string
-  results:string
+  results:Array<string>
 }
 
 interface ApplyButtonProps {
@@ -15,7 +15,7 @@ interface ApplyButtonProps {
 }
 
 interface ContainerProps {
-  results:string,
+  results:Array<string>,
   onInputCommands:(event: {target: { value: string }}) => void,
   onApplyButtonClick:() => void
 }
@@ -52,7 +52,7 @@ export default class ToyRobotPage extends Component<Props,State> {
     super(props);
     this.state = {
       inputCommands: '',
-      results:''
+      results:[]
     };
   }
 
@@ -72,6 +72,9 @@ export default class ToyRobotPage extends Component<Props,State> {
   onInputCommands = (event: { target: { value: string } }) => this.setState({inputCommands: event.target.value});
 
   //TODO:call the core algorithm to generate the report
-  onApplyButtonClick = () => this.setState({results: this.state.inputCommands});
+  onApplyButtonClick = () => {
+    this.setState({results:this.inputCommandsConverter(this.state.inputCommands)})
+  };
   
+  inputCommandsConverter = (commandsString:string) => commandsString.split('\n');
 }

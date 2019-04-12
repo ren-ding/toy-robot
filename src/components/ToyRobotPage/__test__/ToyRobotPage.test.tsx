@@ -34,10 +34,11 @@ describe('ToyRobotPage', () => {
     //TODO:call the core algorithm to generate the report rather than same as commands
     it('the outputPanel results props should changed as results', () => {
       const page = toyRobotPage();
-      const resultsString = 'PLACE 0,0,NORTH';
-      page.setState({inputCommands: resultsString});
+      const inputCommands = 'PLACE 0,0,NORTH\nLEFT\nREPORT';
+      const results = ['PLACE 0,0,NORTH','LEFT','REPORT']
+      page.setState({inputCommands: inputCommands});
       page.find('#apply-button').simulate('click');
-      expect(page.find('ReportPanel').at(0).props().results).toEqual(resultsString);
+      expect(page.find('ReportPanel').at(0).props().results).toEqual(results);
     });
   })
   
