@@ -1,11 +1,11 @@
 import deepFreeze from 'deep-freeze';
 
-interface Robot {
+export interface Robot {
     position: Array<number>,
     faceDirection: string
 }
 
-interface Action {
+export interface Action {
     type: string,
     position?: Array<number>,
     faceDirection?: string
