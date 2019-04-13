@@ -1,10 +1,12 @@
-import {reducer} from '../robotCenter'
+import {reducer} from '../robotCenter';
+import deepFreeze from 'deep-freeze';
 
 describe('robot center reducer fucntion',()=>{
     const buildRow = (rowIndex:number,col:number) => [...Array(col).keys()].map(n=>[rowIndex,n]);
     const buildMap = (numOfRow:number,numOfCol:number) => [...Array(numOfRow).keys()].map(n=>buildRow(n,numOfCol));
 
     const map = buildMap(5,5);
+    deepFreeze(map);
     const faceDirection = ['NORTH','EAST','SOUTH','WEST'];
 
     describe('Unknow command',()=>{
@@ -53,7 +55,7 @@ describe('robot center reducer fucntion',()=>{
                 expect(reducer(state1,command)).toEqual(state2);
 
                 const state3 = {position:map[2][2], faceDirection:faceDirection[1]};
-                const state4 = {position:map[2][3], faceDirection:faceDirection[1]};
+                const state4 = {position:map[3][2], faceDirection:faceDirection[1]};
                 expect(reducer(state3,command)).toEqual(state4);
             });
         });
@@ -63,7 +65,7 @@ describe('robot center reducer fucntion',()=>{
                 const state1 = {position:map[0][0], faceDirection:faceDirection[3]};
                 expect(reducer(state1,command)).toEqual(state1);
 
-                const state2 = {position:map[4][2], faceDirection:faceDirection[0]};
+                const state2 = {position:map[4][2], faceDirection:faceDirection[1]};
                 expect(reducer(state2,command)).toEqual(state2);
             });
         });
@@ -85,7 +87,7 @@ describe('robot center reducer fucntion',()=>{
     });
 
     describe('RIGHT command',()=>{
-        const command = {type:'LEFT'};
+        const command = {type:'RIGHT'};
         it('stay in the same position with a new right rotated direction',()=>{
             const state1 = {position:map[0][0], faceDirection:faceDirection[0]};
             const state2 = {position:map[0][0], faceDirection:faceDirection[1]};
