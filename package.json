@@ -10,12 +10,14 @@
     "@types/node": "11.13.4",
     "@types/react": "16.8.13",
     "@types/react-dom": "16.8.4",
+    "@types/react-test-renderer": "^16.8.1",
     "deep-freeze": "0.0.1",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.12.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "2.1.8",
+    "react-test-renderer": "^16.8.6",
     "typescript": "3.4.3"
   },
   "scripts": {

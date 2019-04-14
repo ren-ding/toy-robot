@@ -2,6 +2,7 @@ import React from 'react';
 import InputCommandsPanel from '../InputCommandsPanel'
 import Adapter from 'enzyme-adapter-react-16';
 import Enzyme, { mount } from 'enzyme';
+import renderer from 'react-test-renderer';
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('InputPanel', ()=>{
@@ -15,11 +16,10 @@ describe('InputPanel', ()=>{
     inputCommandsPanel = () => mount(<InputCommandsPanel {...props} />)
   });
 
-  describe('When initialized the component', ()=>{
-    it('should render a span and an inputcommand textarea', () => {
-      const panel = inputCommandsPanel();
-      expect(panel.html()).toContain('Please input commands');
-      expect(panel.find('InputCommands').length).toBe(1);
+  describe('render', ()=>{
+    it('should render to match with snapshot', () => {
+      const tree = renderer.create(<InputCommandsPanel {...props} />).toJSON();
+      expect(tree).toMatchSnapshot();
     })
   });
   

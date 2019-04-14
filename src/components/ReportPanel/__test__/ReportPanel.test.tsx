@@ -2,6 +2,7 @@ import React from 'react';
 import ReportPanel from '../ReportPanel'
 import Adapter from 'enzyme-adapter-react-16';
 import Enzyme, { shallow } from 'enzyme';
+import renderer from 'react-test-renderer';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -22,11 +23,9 @@ describe('ReportPanel', ()=>{
   });
 
   describe('initialize with an empty string results props', ()=>{
-    it('should render a title span and an empty textarea', () => {
-      const panel = reportPanel();
-      expect(panel.html()).toContain('Results:');
-      expect(panel.find('#report-panel-results').length).toBe(1);
-      expect(panel.find('#report-panel-results').text()).toBe('');
+    it('should render to match with snapshot', () => {
+      const tree = renderer.create(<ReportPanel {...props} />).toJSON();
+      expect(tree).toMatchSnapshot();
     });
   });
   

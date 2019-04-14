@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ToyRobotPage render  should render to match snapshot 1`] = `
+<div
+  className="toy-robot-page-wrapper"
+  id="toy-robot-page-wrapper"
+>
+  <div
+    className="toy-robot-page-header"
+    id="toy-robot-page-header"
+  >
+    Toy-Robot Simulator
+  </div>
+  <div
+    className="toy-robot-page-container"
+    id="toy-robot-page-container"
+  >
+    <div
+      className="input-commands-panel-wrapper"
+      id="input-commands-panel-wrapper"
+    >
+      <span
+        className="input-label"
+        id="input-label"
+      >
+        Please input commands
+      </span>
+      <textarea
+        className="input-commands-textarea"
+        onChange={[Function]}
+        rows={20}
+      />
+    </div>
+    <button
+      className="apply-button"
+      id="apply-button"
+      onClick={[Function]}
+      type="button"
+    >
+      apply
+    </button>
+    <div
+      className="report-panel-wrapper"
+      id="report-panel-wrapper"
+    >
+      <span
+        className="report-panel-label"
+      >
+        Results:
+      </span>
+      <div
+        className="report-panel-results"
+        id="report-panel-results"
+      />
+    </div>
+  </div>
+</div>
+`;
