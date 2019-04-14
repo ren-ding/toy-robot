@@ -74,7 +74,7 @@ Launches the test runner in the interactive watch mode.<br>
 |               | index.tsx           |  ReactDom render root component     |
 
 
-### components folder include three components
+### Components folder include three components
 
 | Component         |                   |  Description                                           |
 | ----------------- | ----------------- | -------------------------------------------------------|
@@ -85,21 +85,21 @@ Launches the test runner in the interactive watch mode.<br>
 Each component has it's unit test folder __test__ , styles folders, it also contains a index.tsx to for exporting components if only this component need to be used.<br>
 ToyRobotPage has an integration-tests.test.tsx contains all integration tests<br>
 
-### businessdomain include a robotCenter.tsx
+### Businessdomain include a robotCenter.tsx
 robotCenter has two functions<br>
 | robotCenter           |  Description                                           |
 | --------------------- | -------------------------------------------------------|
 | reducer               |  take a state and an action return a new state         |
 | inputCommandsConverter|  convert commands string into an array of actions      |
 
-### state
+### State
 | variable name     |  type                                                           |
 | ----------------- | --------------------------------------------------------------- |
 | position          |  an array of two number stand for xcoordinate and y coordinate  |
 | faceDirection     |  'NORTH' or 'EAST' or 'SOUTH' or'WEST'                          |
 | reportHistory     |  nullable string array record the report history                |
 
-### action
+### Action
 {type:'PLACE', position:Array<number>, faceDirection:string }<br>
 {type:'MOVE'}<br>
 {type:'LEFT'}<br>
