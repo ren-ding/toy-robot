@@ -76,7 +76,7 @@ export default class ToyRobotPage extends Component<Props,State> {
 
   onApplyButtonClick = () => {
     const commands = this.props.inputCommandsConverter(this.state.inputCommands); 
-    const finalState = commands.reduce(this.props.reducer,{position:[0,0],faceDirection:'NORTH'});
+    const finalState = commands.reduce(this.props.reducer,{position:[0,0],faceDirection:'NORTH',reportHistory:[]});
     this.setState({results:finalState.reportHistory});
   };
 }

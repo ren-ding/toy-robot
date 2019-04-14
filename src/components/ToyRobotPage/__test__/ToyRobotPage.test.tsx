@@ -44,7 +44,8 @@ describe('ToyRobotPage', () => {
   }
 
   describe('input commands and click apply button', () => {
-    const testCases = [['PLACE 0,0,NORTH\nMOVEFORWARD\nREPORT',['0,0,NORTH']],
+    const testCases = [['PLACE 0,0,NORTH\nMOVE',[]],
+                       ['PLACE 0,0,NORTH\nMOVEFORWARD\nREPORT',['0,0,NORTH']],
                        ['PLACE 0,0,NORTH\nMOVE\nREPORT',['0,1,NORTH']],
                        ['PLACE 0,0,NORTH\nLEFT\nREPORT',['0,0,WEST']],
                        ['PLACE 1,2,EAST\nMOVE\nMOVE\nLEFT\nMOVE\nREPORT',['3,3,NORTH']],
@@ -57,28 +58,34 @@ describe('ToyRobotPage', () => {
                       ];
     deepFreeze(testCases);
     
+    describe('start from a place, no report', () => {
+      it('should return an empty array',()=>{
+        checkReport(testCases[0]);
+      });
+    });
+
     describe('start from a place, report in the end', () => {
       describe('case0:invalid commands',()=>{
         it('should stay in the same place with same face direction',()=>{
-          checkReport(testCases[0]);
+          checkReport(testCases[1]);
         });
       });
       
       describe('case1:a move command',()=>{
         it('should move to the next position with the same face direction',()=>{
-          checkReport(testCases[1]);
+          checkReport(testCases[2]);
         });
       });
       
       describe('case2:on the map edge and facing outside',()=>{
         it('should not move, stay in the same place before move',()=>{
-          checkReport(testCases[2]);
+          checkReport(testCases[3]);
         });
       });
       
       describe('case3:multiple move and rotation comands',()=>{
         it('should move to the expected place and face to expected direction',()=>{
-          checkReport(testCases[3]);
+          checkReport(testCases[4]);
         });
       });
     });
@@ -86,20 +93,20 @@ describe('ToyRobotPage', () => {
     describe('start from a place, multiple reports', () => {
       describe('case4:include some move commands should not move',()=>{
         it('should move to the expected place and face to expected direction',()=>{
-          checkReport(testCases[4]);
+          checkReport(testCases[5]);
         });
       });
 
       describe('case5:has report command after every other commands',()=>{
         it('should report expected location and face direction after each commands',()=>{
-          checkReport(testCases[5]);
+          checkReport(testCases[6]);
         });
       });
     });
 
     describe('case6:multiple invalid commands, multiple place commands, multiple report commands, some move commands should not move', () => {
       it('should pass and your Jedi training is complete ==|----',()=>{
-        checkReport(testCases[6]);
+        checkReport(testCases[7]);
       });
     });
   });

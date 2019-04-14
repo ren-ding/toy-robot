@@ -3,7 +3,7 @@ import deepFreeze from 'deep-freeze';
 interface Robot {
     position: Array<number>,
     faceDirection: string,
-    reportHistory?: Array<string>
+    reportHistory: Array<string>
 }
 
 interface Action {
@@ -12,7 +12,7 @@ interface Action {
     faceDirection?: string
 }
 
-const reducer = (state:Robot={position:[0,0],faceDirection:'NORTH'}, action:Action):Robot => {
+const reducer = (state:Robot={position:[0,0],faceDirection:'NORTH',reportHistory:[]}, action:Action):Robot => {
     const mapSize:Array<Number> = [5,5];
     deepFreeze(mapSize);
 
