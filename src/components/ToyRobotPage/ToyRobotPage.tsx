@@ -5,6 +5,7 @@ import './styles/ToyRobotPage.css'
 
 interface Props {
   reducer:(state:any, action:any) => any
+  inputCommandsConverter: (commandsString:string) => Array<any>
 }
 
 interface State {
@@ -73,31 +74,9 @@ export default class ToyRobotPage extends Component<Props,State> {
 
   onInputCommands = (event: { target: { value: string } }) => this.setState({inputCommands: event.target.value});
 
-
-  //TODO: add logic to handle with REPORT command
   onApplyButtonClick = () => {
-    const commands = this.inputCommandsConverter(this.state.inputCommands);
-
-    const reducer = (accumulator:any, currentValue:any) => {
-      //construct state and action
-      let action;
-      
-      if(currentValue.startsWith('PLACE')){
-        const info = currentValue.split(' ')[1].split(',');
-        action = {type:'PLACE', position:[parseInt(info[0]),parseInt(info[1])], faceDirection:info[2]};
-      }
-
-      if(currentValue === 'MOVE') action = {type:'MOVE'}
-      if(currentValue === 'LEFT') action = {type:'LEFT'}
-      if(currentValue === 'RIGHT') action = {type:'RIGHT'}
-      
-      return this.props.reducer((accumulator.position&&accumulator.faceDirection)?accumulator:{}, action);
-    };
-
-    const result = commands.reduce(reducer, {});
-    
-    this.setState({results:[result.position[0] +','+ result.position[1] +','+ result.faceDirection]});
+    const commands = this.props.inputCommandsConverter(this.state.inputCommands); 
+    const finalState = commands.reduce(this.props.reducer,{position:[0,0],faceDirection:'NORTH'});
+    this.setState({results:finalState.reportHistory});
   };
-  
-  inputCommandsConverter = (commandsString:string) => commandsString.split('\n');
 }

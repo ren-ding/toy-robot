@@ -1,4 +1,4 @@
-import {reducer} from '../robotCenter';
+import {reducer, inputCommandsConverter} from '../robotCenter';
 import deepFreeze from 'deep-freeze';
 
 describe('robot center reducer fucntion',()=>{
@@ -119,4 +119,65 @@ describe('robot center reducer fucntion',()=>{
             });
         });
     });
+});
+
+describe('robot center input commands converter function',()=>{
+    describe('Place command',()=>{
+        it('should return an array with a place action',()=>{
+            expect(inputCommandsConverter('PLACE 0,0,NORTH')).toEqual([{type:'PLACE',position:[0,0],faceDirection:'NORTH'}]);
+        });
+    });
+
+    describe('MOVE command',()=>{
+        it('should return an array with a move action',()=>{
+            expect(inputCommandsConverter('MOVE')).toEqual([{type:'MOVE'}]);
+        });
+    });
+
+    describe('LEFT command',()=>{
+        it('should return an array with a left action',()=>{
+            expect(inputCommandsConverter('LEFT')).toEqual([{type:'LEFT'}]);
+        });
+    });
+
+    describe('RIGHT command',()=>{
+        it('should return an array with a right action',()=>{
+            expect(inputCommandsConverter('RIGHT')).toEqual([{type:'RIGHT'}]);
+        });
+    });
+
+    describe('REPORT command',()=>{
+        it('should return an array with a report action',()=>{
+            expect(inputCommandsConverter('REPORT')).toEqual([{type:'REPORT'}]);
+        });
+    });
+
+    describe('UNKNOWN command',()=>{
+        it('should return an array with a unknown action',()=>{
+            expect(inputCommandsConverter('HELLO TOY ROBOT')).toEqual([{type:'UNKNOWN'}]);
+        });
+    });
+
+    describe('multiple commands',()=>{
+        const commands = 'PLACE 0,0,NORTH\nLEFT\nMOVE\nREPORT\nRIGHT\nMOVEFORWARD\nREPORT\nMOVE\nREPORT\nRIGHT\nBACKWARD\nMOVE\nBACKWARD\nMOVE\nREPORT';
+        it('should return an array of converted actions',()=>{
+            const expectedActions = [{"faceDirection": "NORTH", "position": [0, 0], "type": "PLACE"},
+                                     {"type": "LEFT"},
+                                     {"type": "MOVE"},
+                                     {"type": "REPORT"},
+                                     {"type": "RIGHT"},
+                                     {"type": "UNKNOWN"},
+                                     {"type": "REPORT"},
+                                     {"type": "MOVE"},
+                                     {"type": "REPORT"}, 
+                                     {"type": "RIGHT"}, 
+                                     {"type": "UNKNOWN"}, 
+                                     {"type": "MOVE"}, 
+                                     {"type": "UNKNOWN"}, 
+                                     {"type": "MOVE"}, 
+                                     {"type": "REPORT"}];
+            expect(inputCommandsConverter(commands)).toEqual(expectedActions);
+        });
+    });
+    
 });

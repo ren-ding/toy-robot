@@ -4,7 +4,7 @@ import InputCommandsPanel from '../../InputCommandsPanel/InputCommandsPanel';
 import ReportPanel from '../../ReportPanel/ReportPanel';
 import Enzyme, {mount} from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import {reducer} from '../../../businessdomain/robotCenter';
+import {reducer,inputCommandsConverter} from '../../../businessdomain/robotCenter';
 import deepFreeze from 'deep-freeze';
 
 Enzyme.configure({ adapter: new Adapter() });
@@ -35,7 +35,7 @@ describe('ToyRobotPage', () => {
   
   
   const checkReport = (testCase:Array<any>) => {
-    props = {reducer};
+    props = {reducer,inputCommandsConverter};
     const page = toyRobotPage();
     page.setState({inputCommands: testCase[0]});
     
