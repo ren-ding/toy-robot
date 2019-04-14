@@ -2,7 +2,8 @@ import deepFreeze from 'deep-freeze';
 
 export interface Robot {
     position: Array<number>,
-    faceDirection: string
+    faceDirection: string,
+    reportHistory?: Array<string>
 }
 
 export interface Action {
@@ -45,6 +46,8 @@ export const reducer = (state:Robot,action:Action) => {
             return directionIndex - 1 < 0 ? {...state, ...{faceDirection:direction[3]}} : {...state, ...{faceDirection:direction[directionIndex - 1]}};
         case 'RIGHT':
             return directionIndex + 1 >= direction.length ? {...state, ...{faceDirection:direction[0]}} : {...state, ...{faceDirection:direction[directionIndex + 1]}};
+        case 'REPORT':
+            return {...state,...{reportHistory:[...state.reportHistory, state.position[0]+','+state.position[1]+','+state.faceDirection]}};
         default:
             return state;
     }

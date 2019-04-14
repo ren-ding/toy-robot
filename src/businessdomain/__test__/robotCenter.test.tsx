@@ -101,4 +101,22 @@ describe('robot center reducer fucntion',()=>{
         });
     });
 
+    describe('REPORT command',()=>{
+        const command = {type:'REPORT'};
+        describe('start with empty reportHistory',()=>{
+            it('should record report history when getting REPORT command',()=>{
+                const state1 = {position:map[2][2], faceDirection:faceDirection[1], reportHistory:[]};
+                const state2 = {position:map[2][2], faceDirection:faceDirection[1], reportHistory:['2,2,'+faceDirection[1]]};
+                expect(reducer(state1,command)).toEqual(state2);
+            });
+        });
+
+        describe('start with existing reportHistory',()=>{
+            it('should record new report history and keep the old one',()=>{
+                const state1 = {position:map[2][2], faceDirection:faceDirection[1], reportHistory:['1,1,WEST']};
+                const state2 = {position:map[2][2], faceDirection:faceDirection[1], reportHistory:['1,1,WEST','2,2,'+faceDirection[1]]};
+                expect(reducer(state1,command)).toEqual(state2);
+            });
+        });
+    });
 });
