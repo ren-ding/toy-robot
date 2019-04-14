@@ -5,7 +5,7 @@ import ReportPanel from '../../ReportPanel/ReportPanel';
 import Enzyme, {mount} from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import {reducer} from '../../../businessdomain/robotCenter';
-
+import deepFreeze from 'deep-freeze';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -33,38 +33,75 @@ describe('ToyRobotPage', () => {
     });
   });
   
-  describe('input commands and click apply button', () => {
+  
+  const checkReport = (testCase:Array<any>) => {
     props = {reducer};
-    it('should report 0,1,NORTH', () => {
-      
-      const page = toyRobotPage();
-      const inputCommands = 'PLACE 0,0,NORTH\nMOVE';
-      page.setState({inputCommands: inputCommands});
-      
-      const results = ['0,1,NORTH'];
-      page.find('#apply-button').simulate('click');
-      expect(page.find('ReportPanel').at(0).props().results).toEqual(results);
-    });
+    const page = toyRobotPage();
+    page.setState({inputCommands: testCase[0]});
     
-    it('should report 0,0,WEST', () => {
-      const page = toyRobotPage();
-      const inputCommands = 'PLACE 0,0,NORTH\nLEFT';
-      page.setState({inputCommands: inputCommands});
+    page.find('#apply-button').simulate('click');
+    expect(page.find('ReportPanel').at(0).props().results).toEqual(testCase[1]);
+  }
+
+  describe('input commands and click apply button', () => {
+    const testCases = [['PLACE 0,0,NORTH\nMOVEFORWARD\nREPORT',['0,0,NORTH']],
+                       ['PLACE 0,0,NORTH\nMOVE\nREPORT',['0,1,NORTH']],
+                       ['PLACE 0,0,NORTH\nLEFT\nREPORT',['0,0,WEST']],
+                       ['PLACE 1,2,EAST\nMOVE\nMOVE\nLEFT\nMOVE\nREPORT',['3,3,NORTH']],
+                       ['PLACE 0,0,NORTH\nREPORT\nLEFT\nREPORT\nMOVE\nREPORT\nRIGHT\nREPORT\nMOVE\nREPORT\nRIGHT\nREPORT\nMOVE\nREPORT'
+                        ,['0,0,NORTH','0,0,WEST','0,0,WEST','0,0,NORTH','0,1,NORTH','0,1,EAST','1,1,EAST',]],
+                       ['PLACE 1,2,EAST\nREPORT\nMOVE\nREPORT\nMOVE\nREPORT\nLEFT\nREPORT\nMOVE\nREPORT'
+                        ,['1,2,EAST','2,2,EAST','3,2,EAST','3,2,NORTH','3,3,NORTH']],
+                       ['PLACE 0,0,NORTH\nLEFT\nMOVE\nREPORT\nRIGHT\nMOVEFORWARD\nREPORT\nMOVE\nREPORT\nRIGHT\nBACKWARD\nMOVE\nBACKWARD\nMOVE\nREPORT'
+                        ,['0,0,WEST','0,0,NORTH','0,1,NORTH','2,1,EAST']]
+                      ];
+    deepFreeze(testCases);
+    
+    describe('start from a place, report in the end', () => {
+      describe('case0:invalid commands',()=>{
+        it('should stay in the same place with same face direction',()=>{
+          checkReport(testCases[0]);
+        });
+      });
       
-      const results = ['0,0,WEST'];
-      page.find('#apply-button').simulate('click');
-      expect(page.find('ReportPanel').at(0).props().results).toEqual(results);
+      describe('case1:a move command',()=>{
+        it('should move to the next position with the same face direction',()=>{
+          checkReport(testCases[1]);
+        });
+      });
+      
+      describe('case2:on the map edge and facing outside',()=>{
+        it('should not move, stay in the same place before move',()=>{
+          checkReport(testCases[2]);
+        });
+      });
+      
+      describe('case3:multiple move and rotation comands',()=>{
+        it('should move to the expected place and face to expected direction',()=>{
+          checkReport(testCases[3]);
+        });
+      });
     });
 
-    it('should report 3,3,NORTH', () => {
-      const page = toyRobotPage();
-      const inputCommands = 'PLACE 1,2,EAST\nMOVE\nMOVE\nLEFT\nMOVE';
-      page.setState({inputCommands: inputCommands});
-      
-      const results = ['3,3,NORTH'];
-      page.find('#apply-button').simulate('click');
-      expect(page.find('ReportPanel').at(0).props().results).toEqual(results);
+    describe('start from a place, multiple reports', () => {
+      describe('case4:include some move commands should not move',()=>{
+        it('should move to the expected place and face to expected direction',()=>{
+          checkReport(testCases[4]);
+        });
+      });
+
+      describe('case5:has report command after every other commands',()=>{
+        it('should report expected location and face direction after each commands',()=>{
+          checkReport(testCases[5]);
+        });
+      });
     });
-  })
-  
+
+    describe('case6:multiple invalid commands, multiple place commands, multiple report commands, some move commands should not move', () => {
+      it('should pass and your Jedi training is complete ==|----',()=>{
+        checkReport(testCases[6]);
+      });
+    });
+  });
+
 });
