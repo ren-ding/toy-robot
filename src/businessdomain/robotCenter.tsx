@@ -3,7 +3,7 @@ import deepFreeze from 'deep-freeze';
 interface Robot {
     position: Array<number>,
     faceDirection: string,
-    reportHistory: Array<string>
+    reportHistory?: Array<string>
 }
 
 interface Action {
@@ -12,15 +12,17 @@ interface Action {
     faceDirection?: string
 }
 
+const DIRECTION = ['NORTH','EAST','SOUTH','WEST'];
+
 const reducer = (state:Robot={position:[0,0],faceDirection:'NORTH',reportHistory:[]}, action:Action):Robot => {
     const mapSize:Array<Number> = [5,5];
     deepFreeze(mapSize);
 
-    const direction = ['NORTH','EAST','SOUTH','WEST'];
-    Object.freeze(direction);
+    Object.freeze(DIRECTION);
 
-    const directionIndex = direction.indexOf(state.faceDirection);
-    
+    const directionIndex:number = DIRECTION.indexOf(state.faceDirection);
+    const generateReportHistory = (state:Robot):string => state.position[0]+','+state.position[1]+','+state.faceDirection;
+
     switch(action.type){
         case 'PLACE':
             if(action.position == undefined 
@@ -43,23 +45,31 @@ const reducer = (state:Robot={position:[0,0],faceDirection:'NORTH',reportHistory
                 return {...state, ...{position: [state.position[0] -1, state.position[1]]}};
             return state;
         case 'LEFT':
-            return directionIndex - 1 < 0 ? {...state, ...{faceDirection:direction[3]}} : {...state, ...{faceDirection:direction[directionIndex - 1]}};
+            return directionIndex - 1 < 0 ? {...state, ...{faceDirection:DIRECTION[3]}} : {...state, ...{faceDirection:DIRECTION[directionIndex - 1]}};
         case 'RIGHT':
-            return directionIndex + 1 >= direction.length ? {...state, ...{faceDirection:direction[0]}} : {...state, ...{faceDirection:direction[directionIndex + 1]}};
+            return directionIndex + 1 >= DIRECTION.length ? {...state, ...{faceDirection:DIRECTION[0]}} : {...state, ...{faceDirection:DIRECTION[directionIndex + 1]}};
         case 'REPORT':
             return state.reportHistory? 
-                {...state,...{reportHistory:[...state.reportHistory, state.position[0]+','+state.position[1]+','+state.faceDirection]}}
-                :{...state,...{reportHistory:[state.position[0]+','+state.position[1]+','+state.faceDirection]}};
+                {...state,...{reportHistory:[...state.reportHistory, generateReportHistory(state)]}}
+                :{...state,...{reportHistory:[generateReportHistory(state)]}};
         default:
             return state;
     }
 }
 
 const inputCommandsConverter = (commandsString:string):Array<Action> => {
+    Object.freeze(DIRECTION);
+
     return commandsString.split('\n').map(commandString=>{
         if(commandString.startsWith('PLACE')){
-            const info = commandString.split(' ')[1].split(',');
-            return {type:'PLACE', position:[parseInt(info[0]),parseInt(info[1])], faceDirection:info[2]};
+            const info = commandString.split(' ')[1];
+            if(info == undefined) return {type:'UNKNOWN'};
+            const infoArray = info.split(',');
+            if(infoArray.length!= 3) return {type:'UNKNOWN'};
+            const positionX = parseInt(infoArray[0]);
+            const positionY = parseInt(infoArray[1]);
+            if(isNaN(positionX) || isNaN(positionY) || !DIRECTION.includes(infoArray[2])) return {type:'UNKNOWN'};
+            return {type:'PLACE', position:[parseInt(infoArray[0]),parseInt(infoArray[1])], faceDirection:infoArray[2]};
         }
 
         if(commandString === 'MOVE') return {type:'MOVE'};

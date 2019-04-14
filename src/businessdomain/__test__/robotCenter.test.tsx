@@ -156,6 +156,14 @@ describe('robot center input commands converter function',()=>{
         it('should return an array with a unknown action',()=>{
             expect(inputCommandsConverter('HELLO TOY ROBOT')).toEqual([{type:'UNKNOWN'}]);
         });
+
+        describe('invalid Place command',()=>{
+            it('should return an array with a unknown action',()=>{
+                expect(inputCommandsConverter('PLACE111,111,NORTH')).toEqual([{type:'UNKNOWN'}]);
+                expect(inputCommandsConverter('PLACE aaa,111,NORTH')).toEqual([{type:'UNKNOWN'}]);
+                expect(inputCommandsConverter('PLACE 111,111,WHEREIAM')).toEqual([{type:'UNKNOWN'}]);
+            });
+        });
     });
 
     describe('multiple commands',()=>{
