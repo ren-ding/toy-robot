@@ -86,8 +86,8 @@ Each component has it's unit test folder __test__ , styles folders, it also cont
 ToyRobotPage has an integration-tests.test.tsx contains all integration tests<br>
 
 ### Businessdomain include a robotCenter.tsx
-robotCenter has two functions<br>
-| robotCenter           |  Description                                           |
+
+| robotCenter function  |  Description                                           |
 | --------------------- | -------------------------------------------------------|
 | reducer               |  take a state and an action return a new state         |
 | inputCommandsConverter|  convert commands string into an array of actions      |
