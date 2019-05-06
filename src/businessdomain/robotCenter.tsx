@@ -25,8 +25,8 @@ const reducer = (state:Robot={position:[0,0],faceDirection:'NORTH',reportHistory
 
     switch(action.type){
         case 'PLACE':
-            if(action.position == undefined 
-            || action.faceDirection == undefined
+            if(action.position === undefined 
+            || action.faceDirection === undefined
             || action.position[0] < 0
             || action.position[0] >= mapSize[0]
             || action.position[1] < 0
@@ -35,13 +35,13 @@ const reducer = (state:Robot={position:[0,0],faceDirection:'NORTH',reportHistory
             
             return {...state, ...{position:action.position, faceDirection:action.faceDirection}}
         case 'MOVE':
-            if(state.faceDirection == 'NORTH' && state.position[1] + 1 < mapSize[1])
+            if(state.faceDirection === 'NORTH' && state.position[1] + 1 < mapSize[1])
                 return {...state, ...{position: [state.position[0], state.position[1]+1]}};
-            if(state.faceDirection == 'SOUTH' && state.position[1] - 1 >= 0)
+            if(state.faceDirection === 'SOUTH' && state.position[1] - 1 >= 0)
                 return {...state, ...{position: [state.position[0], state.position[1]-1]}};
-            if(state.faceDirection == 'EAST' && state.position[0] + 1 < mapSize[0])
+            if(state.faceDirection === 'EAST' && state.position[0] + 1 < mapSize[0])
                 return {...state, ...{position: [state.position[0]+1, state.position[1]]}};
-            if(state.faceDirection == 'WEST' && state.position[0] - 1 >= 0)
+            if(state.faceDirection === 'WEST' && state.position[0] - 1 >= 0)
                 return {...state, ...{position: [state.position[0] -1, state.position[1]]}};
             return state;
         case 'LEFT':
@@ -63,9 +63,9 @@ const inputCommandsConverter = (commandsString:string):Array<Action> => {
     return commandsString.split('\n').map(commandString=>{
         if(commandString.startsWith('PLACE')){
             const info = commandString.split(' ')[1];
-            if(info == undefined) return {type:'UNKNOWN'};
+            if(info === undefined) return {type:'UNKNOWN'};
             const infoArray = info.split(',');
-            if(infoArray.length!= 3) return {type:'UNKNOWN'};
+            if(infoArray.length!== 3) return {type:'UNKNOWN'};
             const positionX = parseInt(infoArray[0]);
             const positionY = parseInt(infoArray[1]);
             if(isNaN(positionX) || isNaN(positionY) || !DIRECTION.includes(infoArray[2])) return {type:'UNKNOWN'};
