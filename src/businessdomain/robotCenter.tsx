@@ -12,16 +12,25 @@ interface Action {
     faceDirection?: string
 }
 
+const report = (state:Robot, action:Action):Robot => {
+    const generateReportHistory = (state:Robot):string => state.position[0]+','+state.position[1]+','+state.faceDirection;
+    switch(action.type){
+        case 'REPORT':
+            return state.reportHistory? 
+                    {...state,...{reportHistory:[...state.reportHistory, generateReportHistory(state)]}}
+                    :{...state,...{reportHistory:[generateReportHistory(state)]}};
+        default:
+            return state;
+    }
+}
+
 const DIRECTION = ['NORTH','EAST','SOUTH','WEST'];
 
 const reducer = (state:Robot={position:[0,0],faceDirection:'NORTH',reportHistory:[]}, action:Action):Robot => {
     const mapSize:Array<Number> = [5,5];
     deepFreeze(mapSize);
-
     Object.freeze(DIRECTION);
-
     const directionIndex:number = DIRECTION.indexOf(state.faceDirection);
-    const generateReportHistory = (state:Robot):string => state.position[0]+','+state.position[1]+','+state.faceDirection;
 
     switch(action.type){
         case 'PLACE':
@@ -49,9 +58,7 @@ const reducer = (state:Robot={position:[0,0],faceDirection:'NORTH',reportHistory
         case 'RIGHT':
             return directionIndex + 1 >= DIRECTION.length ? {...state, ...{faceDirection:DIRECTION[0]}} : {...state, ...{faceDirection:DIRECTION[directionIndex + 1]}};
         case 'REPORT':
-            return state.reportHistory? 
-                {...state,...{reportHistory:[...state.reportHistory, generateReportHistory(state)]}}
-                :{...state,...{reportHistory:[generateReportHistory(state)]}};
+            return report(state,action);
         default:
             return state;
     }
