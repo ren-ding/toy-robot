@@ -1,6 +1,5 @@
-import deepFreeze from 'deep-freeze';
-
 interface Robot {
+    mapSize: Array<number>,
     position: Array<number>,
     faceDirection: string,
     reportHistory?: Array<string>
@@ -26,9 +25,8 @@ const report = (state:Robot, action:Action):Robot => {
 
 const DIRECTION = ['NORTH','EAST','SOUTH','WEST'];
 
-const reducer = (state:Robot={position:[0,0],faceDirection:'NORTH',reportHistory:[]}, action:Action):Robot => {
-    const mapSize:Array<Number> = [5,5];
-    deepFreeze(mapSize);
+const reducer = (state:Robot={mapSize:[5,5], position:[0,0],faceDirection:'NORTH',reportHistory:[]}, action:Action):Robot => {
+    Object.freeze(state.mapSize);
     Object.freeze(DIRECTION);
     const directionIndex:number = DIRECTION.indexOf(state.faceDirection);
 
@@ -37,18 +35,18 @@ const reducer = (state:Robot={position:[0,0],faceDirection:'NORTH',reportHistory
             if(action.position === undefined 
             || action.faceDirection === undefined
             || action.position[0] < 0
-            || action.position[0] >= mapSize[0]
+            || action.position[0] >= state.mapSize[0]
             || action.position[1] < 0
-            || action.position[1] >= mapSize[1]) 
+            || action.position[1] >= state.mapSize[1]) 
                 return state;
             
             return {...state, ...{position:action.position, faceDirection:action.faceDirection}}
         case 'MOVE':
-            if(state.faceDirection === 'NORTH' && state.position[1] + 1 < mapSize[1])
+            if(state.faceDirection === 'NORTH' && state.position[1] + 1 < state.mapSize[1])
                 return {...state, ...{position: [state.position[0], state.position[1]+1]}};
             if(state.faceDirection === 'SOUTH' && state.position[1] - 1 >= 0)
                 return {...state, ...{position: [state.position[0], state.position[1]-1]}};
-            if(state.faceDirection === 'EAST' && state.position[0] + 1 < mapSize[0])
+            if(state.faceDirection === 'EAST' && state.position[0] + 1 < state.mapSize[0])
                 return {...state, ...{position: [state.position[0]+1, state.position[1]]}};
             if(state.faceDirection === 'WEST' && state.position[0] - 1 >= 0)
                 return {...state, ...{position: [state.position[0] -1, state.position[1]]}};

@@ -6,12 +6,14 @@ describe('robot center reducer fucntion',()=>{
     const buildMap = (numOfRow:number,numOfCol:number) => [...Array(numOfRow).keys()].map(n=>buildRow(n,numOfCol));
 
     const map = buildMap(5,5);
+    const mapSize = [5,5];
+
     deepFreeze(map);
     const faceDirection = ['NORTH','EAST','SOUTH','WEST'];
 
     describe('Unknow command',()=>{
         it('should return original state',()=>{
-            const robot = {position: map[0][0], faceDirection:faceDirection[0]};
+            const robot = {mapSize:mapSize, position: map[0][0], faceDirection:faceDirection[0]};
             const command1 = {type:'UNKNOW COMMAND',position:map[1][1],faceDirection:faceDirection[2]};
             expect(reducer(robot,command1)).toEqual(robot);
 
@@ -23,25 +25,25 @@ describe('robot center reducer fucntion',()=>{
     describe('PLACE command',()=>{
         describe('place inside the map in the same position and face direction',()=>{
             it('should return the same position and face direction',()=>{
-                const oldState = {position:map[0][0], faceDirection:faceDirection[0]};
+                const oldState = {mapSize:mapSize, position:map[0][0], faceDirection:faceDirection[0]};
                 const command = {type:'PLACE',position:map[0][0],faceDirection:faceDirection[0]};
-                expect(reducer(oldState,command)).toEqual({position:map[0][0], faceDirection:faceDirection[0]});
+                expect(reducer(oldState,command)).toEqual({mapSize:mapSize, position:map[0][0], faceDirection:faceDirection[0]});
             });
         });
 
         describe('place inside the map in the different position and face direction',()=>{
             it('should return the same position and face direction',()=>{
-                const oldState = {position:map[0][0], faceDirection:faceDirection[0]};
+                const oldState = {mapSize:mapSize, position:map[0][0], faceDirection:faceDirection[0]};
                 const command = {type:'PLACE',position:map[1][1],faceDirection:faceDirection[1]};
-                expect(reducer(oldState,command)).toEqual({position:map[1][1], faceDirection:faceDirection[1]});
+                expect(reducer(oldState,command)).toEqual({mapSize:mapSize, position:map[1][1], faceDirection:faceDirection[1]});
             });
         });
 
         describe('place outside the map',()=>{
             it('should return the original state',()=>{
-                const oldState = {position:map[1][2], faceDirection:faceDirection[1]};
+                const oldState = {mapSize:mapSize, position:map[1][2], faceDirection:faceDirection[1]};
                 const command = {type:'PLACE',position:[6,6],faceDirection:faceDirection[3]};
-                expect(reducer(oldState,command)).toEqual({position:map[1][2], faceDirection:faceDirection[1]});
+                expect(reducer(oldState,command)).toEqual({mapSize:mapSize, position:map[1][2], faceDirection:faceDirection[1]});
             });
         });
     });
@@ -50,22 +52,22 @@ describe('robot center reducer fucntion',()=>{
         const command = {type:'MOVE'};
         describe('can move',()=>{
             it('move to a new position with the same face direction',()=>{
-                const state1 = {position:map[0][0], faceDirection:faceDirection[0]};
-                const state2 = {position:map[0][1], faceDirection:faceDirection[0]};
+                const state1 = {mapSize:mapSize, position:map[0][0], faceDirection:faceDirection[0]};
+                const state2 = {mapSize:mapSize, position:map[0][1], faceDirection:faceDirection[0]};
                 expect(reducer(state1,command)).toEqual(state2);
 
-                const state3 = {position:map[2][2], faceDirection:faceDirection[1]};
-                const state4 = {position:map[3][2], faceDirection:faceDirection[1]};
+                const state3 = {mapSize:mapSize, position:map[2][2], faceDirection:faceDirection[1]};
+                const state4 = {mapSize:mapSize, position:map[3][2], faceDirection:faceDirection[1]};
                 expect(reducer(state3,command)).toEqual(state4);
             });
         });
 
         describe('cannot move(on the map edge and face to outside)',()=>{
             it('stay in the same position with the same face direction',()=>{
-                const state1 = {position:map[0][0], faceDirection:faceDirection[3]};
+                const state1 = {mapSize:mapSize, position:map[0][0], faceDirection:faceDirection[3]};
                 expect(reducer(state1,command)).toEqual(state1);
 
-                const state2 = {position:map[4][2], faceDirection:faceDirection[1]};
+                const state2 = {mapSize:mapSize, position:map[4][2], faceDirection:faceDirection[1]};
                 expect(reducer(state2,command)).toEqual(state2);
             });
         });
@@ -74,10 +76,10 @@ describe('robot center reducer fucntion',()=>{
     describe('LEFT command',()=>{
         const command = {type:'LEFT'};
         it('stay in the same position with a new left rotated direction',()=>{
-            const state1 = {position:map[0][0], faceDirection:faceDirection[0]};
-            const state2 = {position:map[0][0], faceDirection:faceDirection[1]};
-            const state3 = {position:map[0][0], faceDirection:faceDirection[2]};
-            const state4 = {position:map[0][0], faceDirection:faceDirection[3]};
+            const state1 = {mapSize:mapSize, position:map[0][0], faceDirection:faceDirection[0]};
+            const state2 = {mapSize:mapSize, position:map[0][0], faceDirection:faceDirection[1]};
+            const state3 = {mapSize:mapSize, position:map[0][0], faceDirection:faceDirection[2]};
+            const state4 = {mapSize:mapSize, position:map[0][0], faceDirection:faceDirection[3]};
             
             expect(reducer(state1,command)).toEqual(state4);
             expect(reducer(state2,command)).toEqual(state1);
@@ -89,10 +91,10 @@ describe('robot center reducer fucntion',()=>{
     describe('RIGHT command',()=>{
         const command = {type:'RIGHT'};
         it('stay in the same position with a new right rotated direction',()=>{
-            const state1 = {position:map[0][0], faceDirection:faceDirection[0]};
-            const state2 = {position:map[0][0], faceDirection:faceDirection[1]};
-            const state3 = {position:map[0][0], faceDirection:faceDirection[2]};
-            const state4 = {position:map[0][0], faceDirection:faceDirection[3]};
+            const state1 = {mapSize:mapSize, position:map[0][0], faceDirection:faceDirection[0]};
+            const state2 = {mapSize:mapSize, position:map[0][0], faceDirection:faceDirection[1]};
+            const state3 = {mapSize:mapSize, position:map[0][0], faceDirection:faceDirection[2]};
+            const state4 = {mapSize:mapSize, position:map[0][0], faceDirection:faceDirection[3]};
             
             expect(reducer(state1,command)).toEqual(state2);
             expect(reducer(state2,command)).toEqual(state3);
@@ -105,16 +107,16 @@ describe('robot center reducer fucntion',()=>{
         const command = {type:'REPORT'};
         describe('start with empty reportHistory',()=>{
             it('should record report history when getting REPORT command',()=>{
-                const state1 = {position:map[2][2], faceDirection:faceDirection[1], reportHistory:[]};
-                const state2 = {position:map[2][2], faceDirection:faceDirection[1], reportHistory:['2,2,'+faceDirection[1]]};
+                const state1 = {mapSize:mapSize, position:map[2][2], faceDirection:faceDirection[1], reportHistory:[]};
+                const state2 = {mapSize:mapSize, position:map[2][2], faceDirection:faceDirection[1], reportHistory:['2,2,'+faceDirection[1]]};
                 expect(reducer(state1,command)).toEqual(state2);
             });
         });
 
         describe('start with existing reportHistory',()=>{
             it('should record new report history and keep the old one',()=>{
-                const state1 = {position:map[2][2], faceDirection:faceDirection[1], reportHistory:['1,1,WEST']};
-                const state2 = {position:map[2][2], faceDirection:faceDirection[1], reportHistory:['1,1,WEST','2,2,'+faceDirection[1]]};
+                const state1 = {mapSize:mapSize, position:map[2][2], faceDirection:faceDirection[1], reportHistory:['1,1,WEST']};
+                const state2 = {mapSize:mapSize, position:map[2][2], faceDirection:faceDirection[1], reportHistory:['1,1,WEST','2,2,'+faceDirection[1]]};
                 expect(reducer(state1,command)).toEqual(state2);
             });
         });
