@@ -160,8 +160,10 @@ describe('robot center input commands converter function',()=>{
         describe('invalid Place command',()=>{
             it('should return an array with a unknown action',()=>{
                 expect(inputCommandsConverter('PLACE111,111,NORTH')).toEqual([{type:'UNKNOWN'}]);
+                expect(inputCommandsConverter('PLACE 111,11.1,NORTH')).toEqual([{type:'UNKNOWN'}]);
+                expect(inputCommandsConverter('PLACE 111,111,NORTH123')).toEqual([{type:'UNKNOWN'}]);
                 expect(inputCommandsConverter('PLACE aaa,111,NORTH')).toEqual([{type:'UNKNOWN'}]);
-                expect(inputCommandsConverter('PLACE 111,111,WHEREIAM')).toEqual([{type:'UNKNOWN'}]);
+                expect(inputCommandsConverter('PLACE 111,111,SOURTH')).toEqual([{type:'UNKNOWN'}]);
             });
         });
     });

@@ -59,17 +59,14 @@ const reducer = (state:Robot={position:[0,0],faceDirection:'NORTH',reportHistory
 
 const inputCommandsConverter = (commandsString:string):Array<Action> => {
     Object.freeze(DIRECTION);
+    const placePatt =  /^PLACE\s\d+,\d+,(NORTH|EAST|SOUTH|WEST)$/g;
 
     return commandsString.split('\n').map(commandString=>{
-        if(commandString.startsWith('PLACE')){
-            const info = commandString.split(' ')[1];
-            if(info === undefined) return {type:'UNKNOWN'};
-            const infoArray = info.split(',');
-            if(infoArray.length!== 3) return {type:'UNKNOWN'};
+        if(placePatt.test(commandString)){
+            const infoArray = commandString.split(' ')[1].split(',');
             const positionX = parseInt(infoArray[0]);
             const positionY = parseInt(infoArray[1]);
-            if(isNaN(positionX) || isNaN(positionY) || !DIRECTION.includes(infoArray[2])) return {type:'UNKNOWN'};
-            return {type:'PLACE', position:[parseInt(infoArray[0]),parseInt(infoArray[1])], faceDirection:infoArray[2]};
+            return {type:'PLACE', position:[positionX,positionY], faceDirection:infoArray[2]};
         }
 
         if(commandString === 'MOVE') return {type:'MOVE'};
