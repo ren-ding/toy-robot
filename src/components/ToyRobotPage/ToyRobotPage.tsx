@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
-import InputCommandsPanel from '../InputCommandsPanel/InputCommandsPanel'
-import ReportPanel from '../ReportPanel/ReportPanel'
-import './styles/ToyRobotPage.css'
+import InputCommandsPanel from '../InputCommandsPanel/InputCommandsPanel';
+import ReportPanel from '../ReportPanel/ReportPanel';
+import {State, Action} from '../../businessdomain/robotCenter';
+import RobotMap from '../../businessdomain/RobotMap';
+import Robot from '../../businessdomain/Robot';
+import Position from '../../businessdomain/Position';
+import './styles/ToyRobotPage.css';
 
-interface Props {
-  reducer:(state:any, action:any) => any
-  inputCommandsConverter: (commandsString:string) => Array<any>
+interface ToyRobotPageProps {
+  reducer:(state:State, action:Action) => State
+  inputCommandsConverter: (commandsString:string) => Array<Action>
 }
 
-interface State {
+interface ToyRobotPageState {
   inputCommands:string
   results:Array<string>
 }
@@ -50,8 +54,8 @@ const Container = ({
 );
 
 
-export default class ToyRobotPage extends Component<Props,State> {
-  constructor(props:Props) {
+export default class ToyRobotPage extends Component<ToyRobotPageProps,ToyRobotPageState> {
+  constructor(props:ToyRobotPageProps) {
     super(props);
     this.state = {
       inputCommands: '',
@@ -76,7 +80,7 @@ export default class ToyRobotPage extends Component<Props,State> {
 
   onApplyButtonClick = () => {
     const commands = this.props.inputCommandsConverter(this.state.inputCommands); 
-    const finalState = commands.reduce(this.props.reducer,{mapSize:[5,5], position:[0,0],faceDirection:'NORTH',reportHistory:[]});
+    const finalState = commands.reduce(this.props.reducer,{robot:new Robot(new Position(0,0),'NORTH'),map:new RobotMap(5,5),reportHistory:[]});
     this.setState({results:finalState.reportHistory});
   };
 }
