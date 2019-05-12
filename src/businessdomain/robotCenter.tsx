@@ -15,46 +15,39 @@ export interface Action {
     faceDirection?: string
 }
 
-const place = (state:State, action:Action):State => {
-    if(action.position === undefined 
-        || action.faceDirection === undefined
-        || action.position.x < 0
-        || action.position.x >= state.map.width
-        || action.position.y < 0
-        || action.position.y >= state.map.height) 
-            return state;
-
-        return {...state, robot:new Robot(new Position(action.position.x,action.position.y), action.faceDirection) };
+const canPlace = (position:Position, faceDirection:string, map:RobotMap):boolean => {
+    return (position.x >= 0 &&
+            position.x < map.width &&
+            position.y >= 0 &&
+            position.y < map.height &&
+            DIRECTION.includes(faceDirection));      
 }
 
-const move = (state:State):State =>{
-    if(state.robot.faceDirection === 'NORTH' && state.robot.position.y + 1 < state.map.height)
-        return {...state, robot:new Robot(new Position(state.robot.position.x, state.robot.position.y+1), state.robot.faceDirection) };
-    if(state.robot.faceDirection === 'SOUTH' && state.robot.position.y - 1 >= 0)
-        return {...state, robot:new Robot(new Position(state.robot.position.x, state.robot.position.y-1), state.robot.faceDirection) };
-    if(state.robot.faceDirection === 'EAST' && state.robot.position.x + 1 < state.map.width)
-        return {...state, robot:new Robot(new Position(state.robot.position.x+1, state.robot.position.y), state.robot.faceDirection) };
-    if(state.robot.faceDirection === 'WEST' && state.robot.position.x - 1 >= 0)
-        return {...state, robot:new Robot(new Position(state.robot.position.x -1, state.robot.position.y), state.robot.faceDirection) };
-    return state;
+const move = (position:Position, faceDirection:string, map:RobotMap):Position =>{
+    if(faceDirection === 'NORTH' && position.y + 1 < map.height)
+        return new Position(position.x, position.y+1);
+    if(faceDirection === 'SOUTH' && position.y - 1 >= 0)
+        return new Position(position.x, position.y-1);
+    if(faceDirection === 'EAST' && position.x + 1 < map.width)
+        return new Position(position.x+1, position.y);
+    if(faceDirection === 'WEST' && position.x - 1 >= 0)
+        return new Position(position.x -1, position.y);
+    return position;
 }
 
-const rotate = (state:State, action:Action):State => {
-    const directionIndex:number = DIRECTION.indexOf(state.robot.faceDirection);
-    switch(action.type){
+const rotate = (faceDirection:string, rotateDirection:string):string => {
+    const directionIndex:number = DIRECTION.indexOf(faceDirection);
+    switch(rotateDirection){
         case 'LEFT':
-            return {...state, robot:new Robot(state.robot.position, DIRECTION[(directionIndex - 1 + DIRECTION.length) % DIRECTION.length ]) };
+            return DIRECTION[(directionIndex - 1 + DIRECTION.length) % DIRECTION.length ];
         case 'RIGHT':
-            return {...state, robot:new Robot(state.robot.position, DIRECTION[(directionIndex + 1) % DIRECTION.length ]) };
+            return DIRECTION[(directionIndex + 1) % DIRECTION.length ];
         default:
-            return state;
+            return faceDirection;
     }
 }
 
-const report = (state:State):State => {
-    const newHistory = state.robot.position.x+','+state.robot.position.y+','+state.robot.faceDirection;
-    return {...state, reportHistory:[...state.reportHistory, newHistory]};
-}
+const newHistory = (robot:Robot):string => robot.position.x+','+robot.position.y+','+robot.faceDirection;
 
 const DIRECTION = ['NORTH','EAST','SOUTH','WEST'];
 
@@ -64,14 +57,17 @@ const reducer = (state:State={robot:new Robot(new Position(0,0),'NORTH'), map:ne
 
     switch(action.type){
         case 'PLACE': 
-            return place(state,action);
+            if (action.position === undefined ||
+                action.faceDirection === undefined ||
+                !canPlace(action.position,action.faceDirection,state.map)) return state;
+            return {...state, robot:new Robot(new Position(action.position.x,action.position.y), action.faceDirection) }
         case 'MOVE': 
-            return move(state);
+            return {...state, robot:new Robot(move(state.robot.position, state.robot.faceDirection, state.map), state.robot.faceDirection) };
         case 'LEFT':
         case 'RIGHT':
-            return rotate(state,action);
+            return {...state, robot:new Robot(state.robot.position, rotate(state.robot.faceDirection,action.type)) };
         case 'REPORT':
-            return report(state);
+            return {...state, reportHistory:[...state.reportHistory, newHistory(state.robot)]};
         default:
             return state;
     }
