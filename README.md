@@ -33,7 +33,7 @@ Launches the test runner in the interactive watch mode.<br>
 |--public<br>
 |   |---index.html<br>
 |--src<br>
-|   |---businessdomain<br>
+|   |---model<br>
 |            |---__test__<br>
 |            |      |---robotCenter.test.tsx<br>
 |            |---robotCenter.tsx<br>
@@ -69,7 +69,7 @@ Launches the test runner in the interactive watch mode.<br>
 | First Level   | Second level        |  Description                        |
 | ------------- | ------------------- | ------------------------------------|
 | public        | index.html          |  html view                          |
-| src           | businessdomain      |  business domain logic              |
+| src           | model               |  business domain logic              |
 |               | components          |  React components                   |
 |               | index.tsx           |  ReactDom render root component     |
 
@@ -85,7 +85,7 @@ Launches the test runner in the interactive watch mode.<br>
 Each component has it's unit test folder __test__ , styles folders, it also contains a index.tsx to for exporting components if only this component need to be used.<br>
 ToyRobotPage has an integration-tests.test.tsx contains all integration tests<br>
 
-### Businessdomain include a robotCenter.tsx
+### Model include a robotCenter.tsx
 
 | robotCenter function  |  Description                                           |
 | --------------------- | -------------------------------------------------------|

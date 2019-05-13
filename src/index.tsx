@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ToyRobotPage from './components/ToyRobotPage/ToyRobotPage';
 import * as serviceWorker from './serviceWorker';
-import {reducer, inputCommandsConverter} from './businessdomain/robotCenter'
+import {reducer, inputCommandsConverter} from './model/robotCenter'
 
 ReactDOM.render(<ToyRobotPage 
                   reducer={reducer}

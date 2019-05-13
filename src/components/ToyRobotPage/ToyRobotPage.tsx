@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import InputCommandsPanel from '../InputCommandsPanel/InputCommandsPanel';
 import ReportPanel from '../ReportPanel/ReportPanel';
-import {State, Action} from '../../businessdomain/robotCenter';
+import {State, Action} from '../../model/robotCenter';
 import './styles/ToyRobotPage.css';
 
 interface ToyRobotPageProps {
