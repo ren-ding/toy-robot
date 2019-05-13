@@ -3,11 +3,9 @@
 exports[`InputPanel render should render to match with snapshot 1`] = `
 <div
   className="input-commands-panel-wrapper"
-  id="input-commands-panel-wrapper"
 >
   <span
     className="input-label"
-    id="input-label"
   >
     Please input commands
   </span>

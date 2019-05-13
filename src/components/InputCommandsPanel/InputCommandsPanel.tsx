@@ -18,8 +18,8 @@ export default class InputCommandsPanel extends Component<Props> {
 
   render() {
     return (
-      <div id='input-commands-panel-wrapper' className='input-commands-panel-wrapper'>
-        <span id='input-label' className='input-label'>Please input commands</span>
+      <div className='input-commands-panel-wrapper'>
+        <span className='input-label'>Please input commands</span>
         <InputCommands 
           onInputCommands={this.props.onInputCommands}
         />

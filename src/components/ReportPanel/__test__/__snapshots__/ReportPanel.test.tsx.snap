@@ -3,7 +3,6 @@
 exports[`ReportPanel initialize with an empty string results props should render to match with snapshot 1`] = `
 <div
   className="report-panel-wrapper"
-  id="report-panel-wrapper"
 >
   <span
     className="report-panel-label"

@@ -26,7 +26,7 @@ interface ContainerProps {
 }
 
 const Header = () => (
-  <div id='toy-robot-page-header' className='toy-robot-page-header'>Toy-Robot Simulator</div>
+  <div className='toy-robot-page-header'>Toy-Robot Simulator</div>
 );
 
 const ApplyButton = ({
@@ -40,7 +40,7 @@ const Container = ({
   onInputCommands,
   onApplyButtonClick
 }:ContainerProps) =>(
-  <div id='toy-robot-page-container' className='toy-robot-page-container'>
+  <div className='toy-robot-page-container'>
   <InputCommandsPanel 
     onInputCommands = {onInputCommands}
   />
@@ -63,7 +63,7 @@ export default class ToyRobotPage extends Component<ToyRobotPageProps,ToyRobotPa
 
   render() {
     return (
-      <div id='toy-robot-page-wrapper' className='toy-robot-page-wrapper'>
+      <div className='toy-robot-page-wrapper'>
         <Header />
         <Container 
           results = {this.state.results}

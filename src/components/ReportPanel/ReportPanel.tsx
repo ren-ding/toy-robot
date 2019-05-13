@@ -13,7 +13,7 @@ export default class ReportPanel extends Component<Props> {
   
   render() {
     return (
-      <div id='report-panel-wrapper' className='report-panel-wrapper'>
+      <div className='report-panel-wrapper'>
         <span className='report-panel-label'>Results:</span>
         <div id='report-panel-results' className='report-panel-results'>
           {this.props.results.map((value,index)=> (<div key={uuidv4()}>{value}</div>))}
