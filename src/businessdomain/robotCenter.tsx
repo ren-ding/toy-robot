@@ -15,6 +15,8 @@ export interface Action {
     faceDirection?: string
 }
 
+export const DIRECTION = ['NORTH','EAST','SOUTH','WEST'];
+
 const canPlace = (position:Position, faceDirection:string, map:RobotMap):boolean => {
     return (position.x >= 0 &&
             position.x < map.width &&
@@ -48,8 +50,6 @@ const rotate = (faceDirection:string, rotateDirection:string):string => {
 }
 
 const newHistory = (robot:Robot):string => robot.position.x+','+robot.position.y+','+robot.faceDirection;
-
-const DIRECTION = ['NORTH','EAST','SOUTH','WEST'];
 
 const reducer = (state:State={robot:{position:{x:0,y:0},faceDirection:'NORTH'}, map:{width:5,height:5}, reportHistory:[]}, action:Action):State => {
     deepFreeze(state);
@@ -94,4 +94,4 @@ const inputCommandsConverter = (commandsString:string):Array<Action> => {
     });
 };
 
-export {reducer,inputCommandsConverter}
+export {canPlace, move, rotate, newHistory, reducer, inputCommandsConverter}

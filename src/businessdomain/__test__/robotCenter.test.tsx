@@ -1,31 +1,33 @@
-import {State, reducer, inputCommandsConverter} from '../robotCenter';
+import {DIRECTION as faceDirection, State, canPlace, move, rotate, newHistory, reducer, inputCommandsConverter} from '../robotCenter';
 import deepFreeze from 'deep-freeze';
 import Position from '../Position';
+import RobotMap from '../RobotMap';
+
+const createPosition = (position:Array<number>):Position => {
+    return {x:position[0],y:position[1]};
+};
+
+const createMap = (map:Array<number>):RobotMap =>{
+    return {width:map[0], height:map[1]};
+};
 
 const createState = (mapSize:Array<number>, 
     position:Array<number>, 
     faceDirection:string,
     reportHistory:Array<string> = []):State =>{
     return {robot: {position:{x:position[0], y:position[1]},faceDirection},
-            map: {width:mapSize[0],height:mapSize[1]},
+            map: createMap(mapSize),
             reportHistory:reportHistory}
-}
+};
 
-const createPosition = (position:Array<number>):Position => {
-    return {x:position[0],y:position[1]};
-}
+const buildRow = (rowIndex:number,col:number) => [...Array(col).keys()].map(n=>[rowIndex,n]);
+const buildMap = (numOfRow:number,numOfCol:number) => [...Array(numOfRow).keys()].map(n=>buildRow(n,numOfCol));
 
-describe('robot center reducer fucntion',()=>{
-    const buildRow = (rowIndex:number,col:number) => [...Array(col).keys()].map(n=>[rowIndex,n]);
-    const buildMap = (numOfRow:number,numOfCol:number) => [...Array(numOfRow).keys()].map(n=>buildRow(n,numOfCol));
+const map = buildMap(5,5);
+const mapSize = [5,5];
 
-    const map = buildMap(5,5);
-    const mapSize = [5,5];
-
+describe('reducer fucntion',()=>{
     deepFreeze(map);
-    const faceDirection = ['NORTH','EAST','SOUTH','WEST'];
-
-    
 
     describe('Unknow command',()=>{
         it('should return original state',()=>{
@@ -142,7 +144,7 @@ describe('robot center reducer fucntion',()=>{
     });
 });
 
-describe('robot center input commands converter function',()=>{
+describe('inputCommandsConverter function',()=>{
     describe('Place command',()=>{
         it('should return an array with a place action',()=>{
             expect(inputCommandsConverter('PLACE 0,0,NORTH')).toEqual([{type:'PLACE',position:createPosition([0,0]),faceDirection:'NORTH'}]);
@@ -210,5 +212,75 @@ describe('robot center input commands converter function',()=>{
             expect(inputCommandsConverter(commands)).toEqual(expectedActions);
         });
     });
-    
 });
+
+describe('canPlace function', () => {
+    deepFreeze(map);
+    describe('place inside the map',()=>{
+        it('can be placed',()=>{
+            expect(canPlace(createPosition(map[0][0]),faceDirection[0], createMap(mapSize))).toBe(true);
+        });
+    });
+
+    describe('place outside the map',()=>{
+        it('cannot be placed',()=>{
+            expect(canPlace(createPosition([10,10]),faceDirection[0], createMap(mapSize))).toBe(false);
+        });
+    });
+});
+
+describe('move function', () => {
+    deepFreeze(map);
+
+    describe('move in the map',()=>{
+        it('move to a new position',()=>{
+            const newPosition1 = createPosition(map[0][1]);
+            expect(move(createPosition(map[0][0]), faceDirection[0], createMap(mapSize))).toEqual(newPosition1);
+
+            const newPosition2 = createPosition(map[3][2]);
+            expect(move(createPosition(map[2][2]), faceDirection[1], createMap(mapSize))).toEqual(newPosition2);
+        });
+    });
+
+    describe('move out of the map',()=>{
+        it('stay in the same place',()=>{
+            const position1 = createPosition(map[0][0]);
+            expect(move(position1, faceDirection[3], createMap(mapSize))).toEqual(position1);
+
+            const position2 = createPosition(map[4][2]);
+            expect(move(position2, faceDirection[1], createMap(mapSize))).toEqual(position2);
+        });
+    });
+});
+
+describe('rotate function', () => {
+    describe('rotate left',()=>{
+        it('faceDirection should change to left rotate direction',()=>{
+            expect(rotate(faceDirection[0], 'LEFT')).toEqual(faceDirection[3]);
+            expect(rotate(faceDirection[1], 'LEFT')).toEqual(faceDirection[0]);
+            expect(rotate(faceDirection[2], 'LEFT')).toEqual(faceDirection[1]);
+            expect(rotate(faceDirection[3], 'LEFT')).toEqual(faceDirection[2]);
+        });
+    });
+
+    describe('rotate right',()=>{
+        it('faceDirection should change to right rotate direction',()=>{
+            expect(rotate(faceDirection[0], 'RIGHT')).toEqual(faceDirection[1]);
+            expect(rotate(faceDirection[1], 'RIGHT')).toEqual(faceDirection[2]);
+            expect(rotate(faceDirection[2], 'RIGHT')).toEqual(faceDirection[3]);
+            expect(rotate(faceDirection[3], 'RIGHT')).toEqual(faceDirection[0]);
+        });
+    });
+});
+
+describe('newHistory function', () => {
+    deepFreeze(map);
+    describe('formalized a new history',()=>{
+        it('return the new history',()=>{
+            const robot = {position:createPosition(map[2][2]), faceDirection: faceDirection[2]};
+            const history = '2,2,SOUTH';
+            expect(newHistory(robot)).toEqual(history);
+        });
+    });  
+});
+
