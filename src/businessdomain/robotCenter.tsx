@@ -25,13 +25,13 @@ const canPlace = (position:Position, faceDirection:string, map:RobotMap):boolean
 
 const move = (position:Position, faceDirection:string, map:RobotMap):Position =>{
     if(faceDirection === 'NORTH' && position.y + 1 < map.height)
-        return new Position(position.x, position.y+1);
+        return {x:position.x, y:position.y+1};
     if(faceDirection === 'SOUTH' && position.y - 1 >= 0)
-        return new Position(position.x, position.y-1);
+        return {x:position.x, y:position.y-1};
     if(faceDirection === 'EAST' && position.x + 1 < map.width)
-        return new Position(position.x+1, position.y);
+        return {x:position.x+1, y:position.y};
     if(faceDirection === 'WEST' && position.x - 1 >= 0)
-        return new Position(position.x -1, position.y);
+        return {x:position.x -1, y:position.y};
     return position;
 }
 
@@ -51,7 +51,7 @@ const newHistory = (robot:Robot):string => robot.position.x+','+robot.position.y
 
 const DIRECTION = ['NORTH','EAST','SOUTH','WEST'];
 
-const reducer = (state:State={robot:new Robot(new Position(0,0),'NORTH'), map:new RobotMap(5,5), reportHistory:[]}, action:Action):State => {
+const reducer = (state:State={robot:{position:{x:0,y:0},faceDirection:'NORTH'}, map:{width:5,height:5}, reportHistory:[]}, action:Action):State => {
     deepFreeze(state);
     Object.freeze(DIRECTION);
 
@@ -60,12 +60,12 @@ const reducer = (state:State={robot:new Robot(new Position(0,0),'NORTH'), map:ne
             if (action.position === undefined ||
                 action.faceDirection === undefined ||
                 !canPlace(action.position,action.faceDirection,state.map)) return state;
-            return {...state, robot:new Robot(new Position(action.position.x,action.position.y), action.faceDirection) }
+            return {...state, robot:{ position: {x:action.position.x, y:action.position.y}, faceDirection: action.faceDirection} }
         case 'MOVE': 
-            return {...state, robot:new Robot(move(state.robot.position, state.robot.faceDirection, state.map), state.robot.faceDirection) };
+            return {...state, robot:{ position: move(state.robot.position, state.robot.faceDirection, state.map), faceDirection: state.robot.faceDirection} };
         case 'LEFT':
-        case 'RIGHT':
-            return {...state, robot:new Robot(state.robot.position, rotate(state.robot.faceDirection,action.type)) };
+        case 'RIGHT':  
+            return {...state, robot:{ position: state.robot.position, faceDirection: rotate(state.robot.faceDirection,action.type)} };
         case 'REPORT':
             return {...state, reportHistory:[...state.reportHistory, newHistory(state.robot)]};
         default:
@@ -82,7 +82,7 @@ const inputCommandsConverter = (commandsString:string):Array<Action> => {
             const infoArray = commandString.split(' ')[1].split(',');
             const positionX = parseInt(infoArray[0]);
             const positionY = parseInt(infoArray[1]);
-            return {type:'PLACE', position:new Position(positionX,positionY), faceDirection:infoArray[2]};
+            return {type:'PLACE', position:{x:positionX, y:positionY}, faceDirection:infoArray[2]};
         }
 
         if(commandString === 'MOVE') return {type:'MOVE'};

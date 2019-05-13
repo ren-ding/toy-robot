@@ -1,6 +1,4 @@
 import {State, reducer, inputCommandsConverter} from '../robotCenter';
-import Robot from '../Robot';
-import RobotMap from '../RobotMap';
 import deepFreeze from 'deep-freeze';
 import Position from '../Position';
 
@@ -8,13 +6,13 @@ const createState = (mapSize:Array<number>,
     position:Array<number>, 
     faceDirection:string,
     reportHistory:Array<string> = []):State =>{
-return {robot: new Robot(new Position(position[0],position[1]),faceDirection),
-map: new RobotMap(mapSize[0],mapSize[1]),
-reportHistory:reportHistory}
+    return {robot: {position:{x:position[0], y:position[1]},faceDirection},
+            map: {width:mapSize[0],height:mapSize[1]},
+            reportHistory:reportHistory}
 }
 
 const createPosition = (position:Array<number>):Position => {
-return new Position(position[0],position[1]);
+    return {x:position[0],y:position[1]};
 }
 
 describe('robot center reducer fucntion',()=>{

@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import InputCommandsPanel from '../InputCommandsPanel/InputCommandsPanel';
 import ReportPanel from '../ReportPanel/ReportPanel';
 import {State, Action} from '../../businessdomain/robotCenter';
-import RobotMap from '../../businessdomain/RobotMap';
-import Robot from '../../businessdomain/Robot';
-import Position from '../../businessdomain/Position';
 import './styles/ToyRobotPage.css';
 
 interface ToyRobotPageProps {
@@ -80,7 +77,7 @@ export default class ToyRobotPage extends Component<ToyRobotPageProps,ToyRobotPa
 
   onApplyButtonClick = () => {
     const commands = this.props.inputCommandsConverter(this.state.inputCommands); 
-    const finalState = commands.reduce(this.props.reducer,{robot:new Robot(new Position(0,0),'NORTH'),map:new RobotMap(5,5),reportHistory:[]});
+    const finalState = commands.reduce(this.props.reducer,{robot:{ position: {x:0,y:0},faceDirection:'NORTH'}, map:{width:5, height:5},reportHistory:[]});
     this.setState({results:finalState.reportHistory});
   };
 }
