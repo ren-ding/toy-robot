@@ -2,6 +2,7 @@ import deepFreeze from 'deep-freeze';
 import Robot from './Robot';
 import RobotMap from './RobotMap';
 import Position from './Position';
+import {DIRECTION, numOfEnumElements} from './Enumeration'
 
 export interface State {
     robot: Robot;
@@ -12,46 +13,45 @@ export interface State {
 export interface Action {
     type: string,
     position?: Position,
-    faceDirection?: string
+    faceDirection?: DIRECTION
 }
 
-export const DIRECTION = ['NORTH','EAST','SOUTH','WEST'];
-
-const canPlace = (position:Position, faceDirection:string, map:RobotMap):boolean => {
+const canPlace = (position:Position, faceDirection:DIRECTION, map:RobotMap):boolean => {
     return (position.x >= 0 &&
             position.x < map.width &&
             position.y >= 0 &&
             position.y < map.height &&
-            DIRECTION.includes(faceDirection));      
+            faceDirection in DIRECTION
+            );      
 }
 
-const move = (position:Position, faceDirection:string, map:RobotMap):Position =>{
-    if(faceDirection === 'NORTH' && position.y + 1 < map.height)
+const move = (position:Position, faceDirection:DIRECTION, map:RobotMap):Position =>{
+    if(faceDirection === DIRECTION.NORTH && position.y + 1 < map.height)
         return {x:position.x, y:position.y+1};
-    if(faceDirection === 'SOUTH' && position.y - 1 >= 0)
+    if(faceDirection === DIRECTION.SOUTH && position.y - 1 >= 0)
         return {x:position.x, y:position.y-1};
-    if(faceDirection === 'EAST' && position.x + 1 < map.width)
+    if(faceDirection === DIRECTION.EAST && position.x + 1 < map.width)
         return {x:position.x+1, y:position.y};
-    if(faceDirection === 'WEST' && position.x - 1 >= 0)
+    if(faceDirection === DIRECTION.WEST && position.x - 1 >= 0)
         return {x:position.x -1, y:position.y};
     return position;
 }
 
-const rotate = (faceDirection:string, rotateDirection:string):string => {
-    const directionIndex:number = DIRECTION.indexOf(faceDirection);
+const rotate = (faceDirection:DIRECTION, rotateDirection:string):DIRECTION => {
+    const numOfDirection = numOfEnumElements(DIRECTION);
     switch(rotateDirection){
         case 'LEFT':
-            return DIRECTION[(directionIndex - 1 + DIRECTION.length) % DIRECTION.length ];
+            return (faceDirection - 1 + numOfDirection) % numOfDirection;
         case 'RIGHT':
-            return DIRECTION[(directionIndex + 1) % DIRECTION.length ];
+            return (faceDirection + 1) % numOfDirection;
         default:
             return faceDirection;
     }
 }
 
-const newHistory = (robot:Robot):string => robot.position.x+','+robot.position.y+','+robot.faceDirection;
+const newHistory = (robot:Robot):string => robot.position.x+','+robot.position.y+','+DIRECTION[robot.faceDirection];
 
-const reducer = (state:State={robot:{position:{x:0,y:0},faceDirection:'NORTH'}, map:{width:5,height:5}, reportHistory:[]}, action:Action):State => {
+const reducer = (state:State={robot:{position:{x:0,y:0},faceDirection:DIRECTION.NORTH}, map:{width:5,height:5}, reportHistory:[]}, action:Action):State => {
     deepFreeze(state);
     Object.freeze(DIRECTION);
 
@@ -74,7 +74,6 @@ const reducer = (state:State={robot:{position:{x:0,y:0},faceDirection:'NORTH'}, 
 }
 
 const inputCommandsConverter = (commandsString:string):Array<Action> => {
-    Object.freeze(DIRECTION);
     const placePatt =  /^PLACE\s\d+,\d+,(NORTH|EAST|SOUTH|WEST)$/g;
 
     return commandsString.split('\n').map(commandString=>{
@@ -82,7 +81,7 @@ const inputCommandsConverter = (commandsString:string):Array<Action> => {
             const infoArray = commandString.split(' ')[1].split(',');
             const positionX = parseInt(infoArray[0]);
             const positionY = parseInt(infoArray[1]);
-            return {type:'PLACE', position:{x:positionX, y:positionY}, faceDirection:infoArray[2]};
+            return {type:'PLACE', position:{x:positionX, y:positionY}, faceDirection:DIRECTION[infoArray[2] as keyof typeof DIRECTION]};
         }
 
         if(commandString === 'MOVE') return {type:'MOVE'};

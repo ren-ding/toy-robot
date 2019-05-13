@@ -1,7 +1,8 @@
-import {DIRECTION as faceDirection, State, canPlace, move, rotate, newHistory, reducer, inputCommandsConverter} from '../robotCenter';
+import {State, canPlace, move, rotate, newHistory, reducer, inputCommandsConverter} from '../robotCenter';
 import deepFreeze from 'deep-freeze';
 import Position from '../Position';
 import RobotMap from '../RobotMap';
+import {DIRECTION as faceDirection, numOfEnumElements} from '../Enumeration'
 
 const createPosition = (position:Array<number>):Position => {
     return {x:position[0],y:position[1]};
@@ -13,7 +14,7 @@ const createMap = (map:Array<number>):RobotMap =>{
 
 const createState = (mapSize:Array<number>, 
     position:Array<number>, 
-    faceDirection:string,
+    faceDirection: faceDirection,
     reportHistory:Array<string> = []):State =>{
     return {robot: {position:{x:position[0], y:position[1]},faceDirection},
             map: createMap(mapSize),
@@ -31,11 +32,11 @@ describe('reducer fucntion',()=>{
 
     describe('Unknow command',()=>{
         it('should return original state',()=>{
-            const state = createState(mapSize, map[0][0], faceDirection[0]);
-            const command1 = {type:'UNKNOW COMMAND',position:createPosition(map[1][1]),faceDirection:faceDirection[2]};
+            const state = createState(mapSize, map[0][0], faceDirection.NORTH);
+            const command1 = {type:'UNKNOW COMMAND',position:createPosition(map[1][1]),faceDirection:faceDirection.SOUTH};
             expect(reducer(state,command1)).toEqual(state);
 
-            const command2 = {type:'Hello robot',position:createPosition(map[1][1]),faceDirection:faceDirection[2]};
+            const command2 = {type:'Hello robot',position:createPosition(map[1][1]),faceDirection:faceDirection.SOUTH};
             expect(reducer(state,command2)).toEqual(state);
         });
     });
@@ -43,27 +44,27 @@ describe('reducer fucntion',()=>{
     describe('PLACE command',()=>{
         describe('place inside the map in the same position and face direction',()=>{
             it('should return the same position and face direction',()=>{
-                const oldState = createState(mapSize, map[0][0], faceDirection[0]);
-                const command = {type:'PLACE',position:createPosition(map[0][0]),faceDirection:faceDirection[0]};
-                const expectedState = createState(mapSize, map[0][0], faceDirection[0]);
+                const oldState = createState(mapSize, map[0][0], faceDirection.NORTH);
+                const command = {type:'PLACE',position:createPosition(map[0][0]),faceDirection:faceDirection.NORTH};
+                const expectedState = createState(mapSize, map[0][0], faceDirection.NORTH);
                 expect(reducer(oldState,command)).toEqual(expectedState);
             });
         });
 
         describe('place inside the map in the different position and face direction',()=>{
             it('should return the same position and face direction',()=>{
-                const oldState = createState(mapSize, map[0][0], faceDirection[0]);
-                const command = {type:'PLACE',position:createPosition(map[1][1]),faceDirection:faceDirection[1]};
-                const expectedState = createState(mapSize, map[1][1], faceDirection[1]);
+                const oldState = createState(mapSize, map[0][0], faceDirection.NORTH);
+                const command = {type:'PLACE',position:createPosition(map[1][1]),faceDirection:faceDirection.EAST};
+                const expectedState = createState(mapSize, map[1][1], faceDirection.EAST);
                 expect(reducer(oldState,command)).toEqual(expectedState);
             });
         });
 
         describe('place outside the map',()=>{
             it('should return the original state',()=>{
-                const oldState = createState(mapSize, map[1][2], faceDirection[1]);
-                const command = {type:'PLACE',position:createPosition([6,6]),faceDirection:faceDirection[3]};
-                const expectedState = createState(mapSize, map[1][2], faceDirection[1]);
+                const oldState = createState(mapSize, map[1][2], faceDirection.EAST);
+                const command = {type:'PLACE',position:createPosition([6,6]),faceDirection:faceDirection.WEST};
+                const expectedState = createState(mapSize, map[1][2], faceDirection.EAST);
                 expect(reducer(oldState,command)).toEqual(expectedState);
             });
         });
@@ -73,22 +74,22 @@ describe('reducer fucntion',()=>{
         const command = {type:'MOVE'};
         describe('can move',()=>{
             it('move to a new position with the same face direction',()=>{
-                const state1 = createState(mapSize, map[0][0], faceDirection[0]);
-                const state2 = createState(mapSize, map[0][1], faceDirection[0]);
+                const state1 = createState(mapSize, map[0][0], faceDirection.NORTH);
+                const state2 = createState(mapSize, map[0][1], faceDirection.NORTH);
                 expect(reducer(state1,command)).toEqual(state2);
 
-                const state3 = createState(mapSize, map[2][2], faceDirection[1]);
-                const state4 = createState(mapSize, map[3][2], faceDirection[1]);
+                const state3 = createState(mapSize, map[2][2], faceDirection.EAST);
+                const state4 = createState(mapSize, map[3][2], faceDirection.EAST);
                 expect(reducer(state3,command)).toEqual(state4);
             });
         });
 
         describe('cannot move(on the map edge and face to outside)',()=>{
             it('stay in the same position with the same face direction',()=>{
-                const state1 = createState(mapSize, map[0][0], faceDirection[3]);
+                const state1 = createState(mapSize, map[0][0], faceDirection.WEST);
                 expect(reducer(state1,command)).toEqual(state1);
 
-                const state2 = createState(mapSize, map[4][2], faceDirection[1]);
+                const state2 = createState(mapSize, map[4][2], faceDirection.EAST);
                 expect(reducer(state2,command)).toEqual(state2);
             });
         });
@@ -97,10 +98,10 @@ describe('reducer fucntion',()=>{
     describe('LEFT command',()=>{
         const command = {type:'LEFT'};
         it('stay in the same position with a new left rotated direction',()=>{
-            const state1 = createState(mapSize, map[0][0], faceDirection[0]);
-            const state2 = createState(mapSize, map[0][0], faceDirection[1]);
-            const state3 = createState(mapSize, map[0][0], faceDirection[2]);
-            const state4 = createState(mapSize, map[0][0], faceDirection[3]);
+            const state1 = createState(mapSize, map[0][0], faceDirection.NORTH);
+            const state2 = createState(mapSize, map[0][0], faceDirection.EAST);
+            const state3 = createState(mapSize, map[0][0], faceDirection.SOUTH);
+            const state4 = createState(mapSize, map[0][0], faceDirection.WEST);
             
             expect(reducer(state1,command)).toEqual(state4);
             expect(reducer(state2,command)).toEqual(state1);
@@ -112,10 +113,10 @@ describe('reducer fucntion',()=>{
     describe('RIGHT command',()=>{
         const command = {type:'RIGHT'};
         it('stay in the same position with a new right rotated direction',()=>{
-            const state1 = createState(mapSize, map[0][0], faceDirection[0]);
-            const state2 = createState(mapSize, map[0][0], faceDirection[1]);
-            const state3 = createState(mapSize, map[0][0], faceDirection[2]);
-            const state4 = createState(mapSize, map[0][0], faceDirection[3]);
+            const state1 = createState(mapSize, map[0][0], faceDirection.NORTH);
+            const state2 = createState(mapSize, map[0][0], faceDirection.EAST);
+            const state3 = createState(mapSize, map[0][0], faceDirection.SOUTH);
+            const state4 = createState(mapSize, map[0][0], faceDirection.WEST);
             
             expect(reducer(state1,command)).toEqual(state2);
             expect(reducer(state2,command)).toEqual(state3);
@@ -128,16 +129,16 @@ describe('reducer fucntion',()=>{
         const command = {type:'REPORT'};
         describe('start with empty reportHistory',()=>{
             it('should record report history when getting REPORT command',()=>{
-                const state1 = createState(mapSize, map[2][2], faceDirection[1]);
-                const state2 = createState(mapSize, map[2][2], faceDirection[1], ['2,2,'+faceDirection[1]]);
+                const state1 = createState(mapSize, map[2][2], faceDirection.EAST);
+                const state2 = createState(mapSize, map[2][2], faceDirection.EAST, ['2,2,EAST']);
                 expect(reducer(state1,command)).toEqual(state2);
             });
         });
 
         describe('start with existing reportHistory',()=>{
             it('should record new report history and keep the old one',()=>{
-                const state1 = createState(mapSize, map[2][2], faceDirection[1], ['1,1,WEST']);
-                const state2 = createState(mapSize, map[2][2], faceDirection[1], ['1,1,WEST','2,2,'+faceDirection[1]]);
+                const state1 = createState(mapSize, map[2][2], faceDirection.EAST, ['1,1,WEST']);
+                const state2 = createState(mapSize, map[2][2], faceDirection.EAST, ['1,1,WEST','2,2,EAST']);
                 expect(reducer(state1,command)).toEqual(state2);
             });
         });
@@ -147,7 +148,7 @@ describe('reducer fucntion',()=>{
 describe('inputCommandsConverter function',()=>{
     describe('Place command',()=>{
         it('should return an array with a place action',()=>{
-            expect(inputCommandsConverter('PLACE 0,0,NORTH')).toEqual([{type:'PLACE',position:createPosition([0,0]),faceDirection:'NORTH'}]);
+            expect(inputCommandsConverter('PLACE 0,0,NORTH')).toEqual([{type:'PLACE',position:createPosition([0,0]),faceDirection:faceDirection.NORTH}]);
         });
     });
 
@@ -194,7 +195,7 @@ describe('inputCommandsConverter function',()=>{
     describe('multiple commands',()=>{
         const commands = 'PLACE 0,0,NORTH\nLEFT\nMOVE\nREPORT\nRIGHT\nMOVEFORWARD\nREPORT\nMOVE\nREPORT\nRIGHT\nBACKWARD\nMOVE\nBACKWARD\nMOVE\nREPORT';
         it('should return an array of converted actions',()=>{
-            const expectedActions = [{"type": "PLACE", "faceDirection": "NORTH", "position": createPosition([0, 0])},
+            const expectedActions = [{"type": "PLACE", "faceDirection": faceDirection.NORTH, "position": createPosition([0, 0])},
                                      {"type": "LEFT"},
                                      {"type": "MOVE"},
                                      {"type": "REPORT"},
@@ -218,13 +219,13 @@ describe('canPlace function', () => {
     deepFreeze(map);
     describe('place inside the map',()=>{
         it('can be placed',()=>{
-            expect(canPlace(createPosition(map[0][0]),faceDirection[0], createMap(mapSize))).toBe(true);
+            expect(canPlace(createPosition(map[0][0]),faceDirection.NORTH, createMap(mapSize))).toBe(true);
         });
     });
 
     describe('place outside the map',()=>{
         it('cannot be placed',()=>{
-            expect(canPlace(createPosition([10,10]),faceDirection[0], createMap(mapSize))).toBe(false);
+            expect(canPlace(createPosition([10,10]),faceDirection.NORTH, createMap(mapSize))).toBe(false);
         });
     });
 });
@@ -235,20 +236,20 @@ describe('move function', () => {
     describe('move in the map',()=>{
         it('move to a new position',()=>{
             const newPosition1 = createPosition(map[0][1]);
-            expect(move(createPosition(map[0][0]), faceDirection[0], createMap(mapSize))).toEqual(newPosition1);
+            expect(move(createPosition(map[0][0]), faceDirection.NORTH, createMap(mapSize))).toEqual(newPosition1);
 
             const newPosition2 = createPosition(map[3][2]);
-            expect(move(createPosition(map[2][2]), faceDirection[1], createMap(mapSize))).toEqual(newPosition2);
+            expect(move(createPosition(map[2][2]), faceDirection.EAST, createMap(mapSize))).toEqual(newPosition2);
         });
     });
 
     describe('move out of the map',()=>{
         it('stay in the same place',()=>{
             const position1 = createPosition(map[0][0]);
-            expect(move(position1, faceDirection[3], createMap(mapSize))).toEqual(position1);
+            expect(move(position1, faceDirection.WEST, createMap(mapSize))).toEqual(position1);
 
             const position2 = createPosition(map[4][2]);
-            expect(move(position2, faceDirection[1], createMap(mapSize))).toEqual(position2);
+            expect(move(position2, faceDirection.EAST, createMap(mapSize))).toEqual(position2);
         });
     });
 });
@@ -256,19 +257,19 @@ describe('move function', () => {
 describe('rotate function', () => {
     describe('rotate left',()=>{
         it('faceDirection should change to left rotate direction',()=>{
-            expect(rotate(faceDirection[0], 'LEFT')).toEqual(faceDirection[3]);
-            expect(rotate(faceDirection[1], 'LEFT')).toEqual(faceDirection[0]);
-            expect(rotate(faceDirection[2], 'LEFT')).toEqual(faceDirection[1]);
-            expect(rotate(faceDirection[3], 'LEFT')).toEqual(faceDirection[2]);
+            expect(rotate(faceDirection.NORTH, 'LEFT')).toEqual(faceDirection.WEST);
+            expect(rotate(faceDirection.EAST, 'LEFT')).toEqual(faceDirection.NORTH);
+            expect(rotate(faceDirection.SOUTH, 'LEFT')).toEqual(faceDirection.EAST);
+            expect(rotate(faceDirection.WEST, 'LEFT')).toEqual(faceDirection.SOUTH);
         });
     });
 
     describe('rotate right',()=>{
         it('faceDirection should change to right rotate direction',()=>{
-            expect(rotate(faceDirection[0], 'RIGHT')).toEqual(faceDirection[1]);
-            expect(rotate(faceDirection[1], 'RIGHT')).toEqual(faceDirection[2]);
-            expect(rotate(faceDirection[2], 'RIGHT')).toEqual(faceDirection[3]);
-            expect(rotate(faceDirection[3], 'RIGHT')).toEqual(faceDirection[0]);
+            expect(rotate(faceDirection.NORTH, 'RIGHT')).toEqual(faceDirection.EAST);
+            expect(rotate(faceDirection.EAST, 'RIGHT')).toEqual(faceDirection.SOUTH);
+            expect(rotate(faceDirection.SOUTH, 'RIGHT')).toEqual(faceDirection.WEST);
+            expect(rotate(faceDirection.WEST, 'RIGHT')).toEqual(faceDirection.NORTH);
         });
     });
 });
@@ -277,10 +278,17 @@ describe('newHistory function', () => {
     deepFreeze(map);
     describe('formalized a new history',()=>{
         it('return the new history',()=>{
-            const robot = {position:createPosition(map[2][2]), faceDirection: faceDirection[2]};
+            const robot = {position:createPosition(map[2][2]), faceDirection: faceDirection.SOUTH};
             const history = '2,2,SOUTH';
             expect(newHistory(robot)).toEqual(history);
         });
     });  
+});
+
+describe('the number of enumerated direction elements', () => {
+    it('return the number of enumerated direction elements ',()=>{
+        expect(numOfEnumElements(faceDirection)).toEqual(4);
+    });
+  
 });
 
